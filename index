@@ -1,0 +1,319 @@
+import React, { useState, useEffect } from 'react';
+import { Download } from 'lucide-react';
+
+const NDISSkillsAssessment = () => {
+  const [employeeName, setEmployeeName] = useState('');
+  const [currentRole, setCurrentRole] = useState('');
+  const [experience, setExperience] = useState('');
+  const [coreValues, setCoreValues] = useState(5);
+  const [communication, setCommunication] = useState(5);
+  const [problemSolving, setProblemSolving] = useState(5);
+  const [compliance, setCompliance] = useState(5);
+  const [capacityBuilding, setCapacityBuilding] = useState(5);
+  const [coreValuesTooltip, setCoreValuesTooltip] = useState('');
+  const [communicationTooltip, setCommunicationTooltip] = useState('');
+  const [problemSolvingTooltip, setProblemSolvingTooltip] = useState('');
+  const [complianceTooltip, setComplianceTooltip] = useState('');
+  const [capacityBuildingTooltip, setCapacityBuildingTooltip] = useState('');
+  const [summary, setSummary] = useState('');
+  const [showDownload, setShowDownload] = useState(false);
+
+  const getCoreValuesTooltip = (score) => {
+    if (score >= 9) return "🌟 Champions person-centered values, mentors others in dignity & respect";
+    if (score >= 7) return "💙 Strong person-centered approach, consistently respects choice & control";
+    if (score >= 5) return "👥 Good understanding of participant rights and person-centered principles";
+    if (score >= 3) return "📚 Developing awareness of NDIS values and participant empowerment";
+    return "🔰 Basic understanding; needs significant development in person-centered approach";
+  };
+
+  const getCommunicationTooltip = (score) => {
+    if (score >= 9) return "🗣️ Exceptional communication skills, trauma-informed, leads difficult conversations";
+    if (score >= 7) return "💬 Strong active listening, empathy, adapts communication styles effectively";
+    if (score >= 5) return "🤝 Good rapport building, clear communication with most participants";
+    if (score >= 3) return "📢 Developing communication skills, basic empathy and listening";
+    return "🔇 Limited communication skills; struggles with active listening and empathy";
+  };
+
+  const getProblemSolvingTooltip = (score) => {
+    if (score >= 9) return "🧠 Innovative problem-solver, creates new solutions, leads complex situations";
+    if (score >= 7) return "🔍 Creative thinking, adapts well to change, finds resourceful solutions";
+    if (score >= 5) return "🛠️ Good analytical skills, can solve problems with some guidance";
+    if (score >= 3) return "🤔 Developing problem-solving, needs support for complex situations";
+    return "❓ Relies heavily on supervision; struggles with independent problem-solving";
+  };
+
+  const getComplianceTooltip = (score) => {
+    if (score >= 9) return "🛡️ Expert in NDIS compliance, risk prevention, trains others in safety protocols";
+    if (score >= 7) return "✅ Strong understanding of regulations, proactive risk management";
+    if (score >= 5) return "📋 Good compliance knowledge, follows procedures, reports appropriately";
+    if (score >= 3) return "📖 Developing compliance awareness, needs guidance on complex requirements";
+    return "⚠️ Limited compliance knowledge; requires close supervision for safety";
+  };
+
+  const getCapacityBuildingTooltip = (score) => {
+    if (score >= 9) return "🚀 Expert in skill development, designs programs, exceptional goal planning";
+    if (score >= 7) return "📈 Strong capacity building focus, collaborative goal setting, tracks progress";
+    if (score >= 5) return "🎯 Good focus on participant independence and skill development";
+    if (score >= 3) return "🌱 Developing understanding of capacity building principles";
+    return "📝 Limited focus on participant growth; task-focused rather than development-focused";
+  };
+
+  const getOverallLevel = (scores) => {
+    const total = scores.reduce((a, b) => a + b, 0);
+    const average = total / scores.length;
+    
+    if (average >= 8.5) return { label: "⭐ Expert Level - Senior/Specialist Ready", style: "high" };
+    if (average >= 7) return { label: "🎖️ Advanced Level - Independent Practitioner", style: "high" };
+    if (average >= 5.5) return { label: "✅ Competent Level - Supervised Practice", style: "medium" };
+    if (average >= 4) return { label: "📚 Developing Level - Close Supervision Required", style: "medium" };
+    return { label: "🔰 Beginner Level - Intensive Training Required", style: "low" };
+  };
+
+  const updateTooltips = () => {
+    setCoreValuesTooltip(getCoreValuesTooltip(coreValues));
+    setCommunicationTooltip(getCommunicationTooltip(communication));
+    setProblemSolvingTooltip(getProblemSolvingTooltip(problemSolving));
+    setComplianceTooltip(getComplianceTooltip(compliance));
+    setCapacityBuildingTooltip(getCapacityBuildingTooltip(capacityBuilding));
+  };
+
+  useEffect(() => {
+    updateTooltips();
+  }, [coreValues, communication, problemSolving, compliance, capacityBuilding]);
+
+  const generateSummary = () => {
+    const scores = [coreValues, communication, problemSolving, compliance, capacityBuilding];
+    const total = scores.reduce((a, b) => a + b, 0);
+    const average = (total / scores.length).toFixed(1);
+    const percentage = Math.round((average / 10) * 100);
+    const overallLevel = getOverallLevel(scores);
+    
+    const employee = employeeName || "Unnamed Employee";
+    const role = currentRole || "Not Specified";
+    const exp = experience || "Not Specified";
+
+    // Find highest and lowest scoring areas
+    const skillNames = ["Core Values", "Communication", "Problem-Solving", "Compliance", "Capacity Building"];
+    const skillScores = scores.map((score, index) => ({ name: skillNames[index], score }));
+    skillScores.sort((a, b) => b.score - a.score);
+    const strongest = skillScores[0];
+    const weakest = skillScores[skillScores.length - 1];
+
+    const summaryContent = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+        <h3 style="color: #004080; margin-bottom: 20px;">${employee}</h3>
+        <strong>Role:</strong> ${role}<br>
+        <strong>Experience:</strong> ${exp}<br>
+        <strong>Assessment Date:</strong> ${new Date().toLocaleDateString()}<br><br>
+        
+        <strong>Overall Score:</strong> ${total}/50 (${percentage}%)<br>
+        <strong>Average Score:</strong> ${average}/10<br>
+        <strong>Performance Level:</strong> ${overallLevel.label}<br><br>
+        
+        <strong>Skill Breakdown:</strong><br>
+        • Core Values & Person-Centered: ${coreValues}/10 – ${getCoreValuesTooltip(coreValues)}<br>
+        • Communication & Empathy: ${communication}/10 – ${getCommunicationTooltip(communication)}<br>
+        • Problem-Solving & Adaptability: ${problemSolving}/10 – ${getProblemSolvingTooltip(problemSolving)}<br>
+        • Compliance & Risk Management: ${compliance}/10 – ${getComplianceTooltip(compliance)}<br>
+        • Capacity Building & Goal Planning: ${capacityBuilding}/10 – ${getCapacityBuildingTooltip(capacityBuilding)}<br><br>
+        
+        <strong>Key Strengths:</strong> ${strongest.name} (${strongest.score}/10)<br>
+        <strong>Development Priority:</strong> ${weakest.name} (${weakest.score}/10)<br><br>
+        
+        <strong>Recommended Actions:</strong><br>
+        ${average >= 7 ? 
+          '• Ready for independent practice or leadership development<br>• Consider mentoring newer staff members<br>• Pursue advanced specialization opportunities' :
+          average >= 5 ?
+          '• Continue supervised practice with skill-focused development<br>• Target improvement in lowest-scoring areas<br>• Regular feedback and coaching sessions' :
+          '• Intensive training program required<br>• Close supervision essential<br>• Structured competency development plan needed'
+        }
+      </div>
+    `;
+
+    setSummary(summaryContent);
+    setShowDownload(true);
+  };
+
+  const downloadPDF = () => {
+    // Create a simple text version for download since we can't use html2pdf in React artifacts
+    const textSummary = summary.replace(/<[^>]*>/g, '\n').replace(/&bull;/g, '•');
+    const blob = new Blob([textSummary], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${employeeName || 'Employee'}_Skills_Assessment.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div style={{ fontFamily: 'Arial, sans-serif', margin: '20px', lineHeight: '1.5' }}>
+      <h2 style={{ color: '#004080' }}>NDIS Skills Assessment & Development Pathway</h2>
+
+      <label style={{ fontWeight: 'bold' }}>Employee Name:</label><br />
+      <input 
+        type="text" 
+        value={employeeName}
+        onChange={(e) => setEmployeeName(e.target.value)}
+        placeholder="e.g. Sarah Johnson" 
+        style={{ width: '100%', marginBottom: '20px', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+      /><br />
+
+      <label style={{ fontWeight: 'bold' }}>Current Role:</label><br />
+      <input 
+        type="text" 
+        value={currentRole}
+        onChange={(e) => setCurrentRole(e.target.value)}
+        placeholder="e.g. Support Worker" 
+        style={{ width: '100%', marginBottom: '20px', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+      /><br />
+
+      <label style={{ fontWeight: 'bold' }}>Experience Level:</label><br />
+      <select 
+        value={experience}
+        onChange={(e) => setExperience(e.target.value)}
+        style={{ width: '100%', marginBottom: '20px', padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}
+      >
+        <option value="">Select experience level</option>
+        <option value="New to disability support">New to disability support</option>
+        <option value="Some experience in related fields">Some experience in related fields</option>
+        <option value="1-2 years disability support">1-2 years disability support</option>
+        <option value="3-5 years disability support">3-5 years disability support</option>
+        <option value="5+ years disability support">5+ years disability support</option>
+      </select><br />
+
+      <div style={{ marginBottom: '30px' }}>
+        <label style={{ fontWeight: 'bold' }}>Core Values & Person-Centered Approach (1–10):</label><br />
+        <input 
+          type="range" 
+          min="1" 
+          max="10" 
+          value={coreValues} 
+          onChange={(e) => setCoreValues(parseInt(e.target.value))}
+          style={{ width: '100%' }}
+        />
+        <div style={{ fontSize: '0.9em', marginTop: '5px', color: '#555' }}>
+          {coreValuesTooltip}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '30px' }}>
+        <label style={{ fontWeight: 'bold' }}>Communication & Empathy (1–10):</label><br />
+        <input 
+          type="range" 
+          min="1" 
+          max="10" 
+          value={communication} 
+          onChange={(e) => setCommunication(parseInt(e.target.value))}
+          style={{ width: '100%' }}
+        />
+        <div style={{ fontSize: '0.9em', marginTop: '5px', color: '#555' }}>
+          {communicationTooltip}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '30px' }}>
+        <label style={{ fontWeight: 'bold' }}>Problem-Solving & Adaptability (1–10):</label><br />
+        <input 
+          type="range" 
+          min="1" 
+          max="10" 
+          value={problemSolving} 
+          onChange={(e) => setProblemSolving(parseInt(e.target.value))}
+          style={{ width: '100%' }}
+        />
+        <div style={{ fontSize: '0.9em', marginTop: '5px', color: '#555' }}>
+          {problemSolvingTooltip}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '30px' }}>
+        <label style={{ fontWeight: 'bold' }}>Compliance & Risk Management (1–10):</label><br />
+        <input 
+          type="range" 
+          min="1" 
+          max="10" 
+          value={compliance} 
+          onChange={(e) => setCompliance(parseInt(e.target.value))}
+          style={{ width: '100%' }}
+        />
+        <div style={{ fontSize: '0.9em', marginTop: '5px', color: '#555' }}>
+          {complianceTooltip}
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '30px' }}>
+        <label style={{ fontWeight: 'bold' }}>Capacity Building & Goal Planning (1–10):</label><br />
+        <input 
+          type="range" 
+          min="1" 
+          max="10" 
+          value={capacityBuilding} 
+          onChange={(e) => setCapacityBuilding(parseInt(e.target.value))}
+          style={{ width: '100%' }}
+        />
+        <div style={{ fontSize: '0.9em', marginTop: '5px', color: '#555' }}>
+          {capacityBuildingTooltip}
+        </div>
+      </div>
+
+      <button 
+        onClick={generateSummary}
+        style={{ 
+          backgroundColor: '#004080', 
+          color: 'white', 
+          border: 'none', 
+          padding: '10px 20px', 
+          fontSize: '1em', 
+          cursor: 'pointer', 
+          borderRadius: '5px', 
+          marginRight: '10px' 
+        }}
+        onMouseOver={(e) => e.target.style.backgroundColor = '#003366'}
+        onMouseOut={(e) => e.target.style.backgroundColor = '#004080'}
+      >
+        Generate Summary
+      </button>
+
+      {showDownload && (
+        <button 
+          onClick={downloadPDF}
+          style={{ 
+            backgroundColor: '#004080', 
+            color: 'white', 
+            border: 'none', 
+            padding: '10px 20px', 
+            fontSize: '1em', 
+            cursor: 'pointer', 
+            borderRadius: '5px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '5px'
+          }}
+          onMouseOver={(e) => e.target.style.backgroundColor = '#003366'}
+          onMouseOut={(e) => e.target.style.backgroundColor = '#004080'}
+        >
+          <Download size={16} />
+          Download Report
+        </button>
+      )}
+
+      {summary && (
+        <div style={{ 
+          border: '2px solid #ccc', 
+          padding: '20px', 
+          marginTop: '20px', 
+          borderRadius: '8px',
+          backgroundColor: '#f4f4f4',
+          borderLeft: '6px solid #004080'
+        }}>
+          <div dangerouslySetInnerHTML={{ __html: summary }} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default NDISSkillsAssessment;
