@@ -1,0 +1,439 @@
+import React, { useState } from 'react';
+import { Users, MessageCircle, Brain, Shield, TrendingUp, FileText } from 'lucide-react';
+
+const NDISSkillsAssessment = () => {
+  const [employeeName, setEmployeeName] = useState('');
+  const [coreValues, setCoreValues] = useState(5);
+  const [communication, setCommunication] = useState(5);
+  const [problemSolving, setProblemSolving] = useState(5);
+  const [compliance, setCompliance] = useState(5);
+  const [capacityBuilding, setCapacityBuilding] = useState(5);
+  const [currentRole, setCurrentRole] = useState('');
+  const [experience, setExperience] = useState('');
+  const [summary, setSummary] = useState('');
+
+  const getSkillDescription = (skill, value) => {
+    const descriptions = {
+      coreValues: {
+        1: "Limited understanding of person-centered approach",
+        2: "Basic awareness of NDIS principles",
+        3: "Developing person-centered skills",
+        4: "Good understanding of participant choice and control",
+        5: "Strong person-centered approach and values alignment",
+        6: "Advanced understanding of dignity and respect principles",
+        7: "Excellent person-centered practice skills",
+        8: "Outstanding values-based support approach",
+        9: "Exceptional person-centered leadership",
+        10: "Exemplary values champion and mentor"
+      },
+      communication: {
+        1: "Basic communication skills, needs significant development",
+        2: "Limited active listening and empathy skills",
+        3: "Developing communication and rapport building",
+        4: "Good communication with most participants",
+        5: "Strong communication and empathy skills",
+        6: "Advanced active listening and emotional support",
+        7: "Excellent communication across diverse needs",
+        8: "Outstanding empathy and therapeutic communication",
+        9: "Exceptional communication leadership",
+        10: "Exemplary communication mentor and trainer"
+      },
+      problemSolving: {
+        1: "Relies heavily on supervision for problem-solving",
+        2: "Basic problem-solving with limited creativity",
+        3: "Developing analytical and adaptive thinking",
+        4: "Good problem-solving in familiar situations",
+        5: "Strong creative problem-solving and adaptability",
+        6: "Advanced resource identification and solution development",
+        7: "Excellent innovative thinking and complex problem-solving",
+        8: "Outstanding strategic thinking and solution implementation",
+        9: "Exceptional problem-solving leadership",
+        10: "Exemplary innovation and change management"
+      },
+      compliance: {
+        1: "Limited understanding of NDIS requirements and safety",
+        2: "Basic compliance awareness, needs guidance",
+        3: "Developing understanding of documentation and boundaries",
+        4: "Good compliance with policies and procedures",
+        5: "Strong understanding of risk management and reporting",
+        6: "Advanced knowledge of regulatory requirements",
+        7: "Excellent compliance leadership and incident management",
+        8: "Outstanding risk assessment and prevention skills",
+        9: "Exceptional compliance expertise and training ability",
+        10: "Exemplary regulatory knowledge and system development"
+      },
+      capacityBuilding: {
+        1: "Limited focus on participant skill development",
+        2: "Basic understanding of capacity building principles",
+        3: "Developing goal planning and support skills",
+        4: "Good focus on participant independence and growth",
+        5: "Strong capacity building and goal achievement support",
+        6: "Advanced strength-based practice and skill development",
+        7: "Excellent collaborative goal planning and progress tracking",
+        8: "Outstanding capacity building program development",
+        9: "Exceptional mentoring and skill transfer abilities",
+        10: "Exemplary capacity building leadership and innovation"
+      }
+    };
+    return descriptions[skill][value] || "";
+  };
+
+  const generateSummary = () => {
+    if (!employeeName || !currentRole) {
+      setSummary('Please fill in employee name and current role to generate assessment summary.');
+      return;
+    }
+
+    const totalScore = coreValues + communication + problemSolving + compliance + capacityBuilding;
+    const averageScore = (totalScore / 5).toFixed(1);
+    const percentage = (averageScore / 10 * 100).toFixed(0);
+
+    let overallLevel = '';
+    let developmentPriority = '';
+    
+    if (averageScore >= 8.5) {
+      overallLevel = 'EXPERT LEVEL - Ready for senior/specialist roles';
+      developmentPriority = 'Focus on mentoring others and advanced specializations';
+    } else if (averageScore >= 7) {
+      overallLevel = 'ADVANCED LEVEL - Strong independent practitioner';
+      developmentPriority = 'Leadership development and specialized training opportunities';
+    } else if (averageScore >= 5.5) {
+      overallLevel = 'COMPETENT LEVEL - Suitable for independent practice with support';
+      developmentPriority = 'Targeted skill development in lower-scoring areas';
+    } else if (averageScore >= 4) {
+      overallLevel = 'DEVELOPING LEVEL - Requires close supervision and training';
+      developmentPriority = 'Intensive training program and regular supervision';
+    } else {
+      overallLevel = 'BEGINNER LEVEL - Extensive training and mentoring required';
+      developmentPriority = 'Comprehensive onboarding and foundational skills training';
+    }
+
+    // Identify strongest and weakest areas
+    const skills = {
+      'Core Values & Person-Centered Approach': coreValues,
+      'Communication & Empathy': communication,
+      'Problem-Solving & Adaptability': problemSolving,
+      'Compliance & Risk Management': compliance,
+      'Capacity Building & Goal Planning': capacityBuilding
+    };
+
+    const sortedSkills = Object.entries(skills).sort((a, b) => b[1] - a[1]);
+    const strongest = sortedSkills[0];
+    const weakest = sortedSkills[4];
+
+    const summaryText = `
+NDIS SKILLS ASSESSMENT SUMMARY
+
+Employee: ${employeeName}
+Current Role: ${currentRole}
+Experience Level: ${experience}
+Assessment Date: ${new Date().toLocaleDateString()}
+
+OVERALL PERFORMANCE:
+• Total Score: ${totalScore}/50 (${percentage}%)
+• Average Score: ${averageScore}/10
+• Performance Level: ${overallLevel}
+
+DETAILED SKILL BREAKDOWN:
+• Core Values & Person-Centered Approach: ${coreValues}/10
+  ${getSkillDescription('coreValues', coreValues)}
+
+• Communication & Empathy: ${communication}/10
+  ${getSkillDescription('communication', communication)}
+
+• Problem-Solving & Adaptability: ${problemSolving}/10
+  ${getSkillDescription('problemSolving', problemSolving)}
+
+• Compliance & Risk Management: ${compliance}/10
+  ${getSkillDescription('compliance', compliance)}
+
+• Capacity Building & Goal Planning: ${capacityBuilding}/10
+  ${getSkillDescription('capacityBuilding', capacityBuilding)}
+
+STRENGTHS:
+• Highest Scoring Area: ${strongest[0]} (${strongest[1]}/10)
+• This employee demonstrates strong capabilities in ${strongest[0].toLowerCase()}
+
+DEVELOPMENT PRIORITIES:
+• Primary Focus Area: ${weakest[0]} (${weakest[1]}/10)
+• Development Priority: ${developmentPriority}
+
+RECOMMENDED LEARNING PATHWAY:
+
+IMMEDIATE (Next 2 weeks):
+• Complete NDIS Principles orientation
+• Shadow experienced team members
+• Attend team meetings and supervision sessions
+
+SHORT-TERM (1-3 months):
+${weakest[1] <= 4 ? `• Intensive training in ${weakest[0]}` : `• Focused development in ${weakest[0]}`}
+• Regular skill practice and feedback sessions
+• Competency-based learning modules
+
+MEDIUM-TERM (3-6 months):
+• Advanced skill development workshops
+• Peer mentoring and collaboration
+• Practical application in supported environment
+
+LONG-TERM (6-12 months):
+• Specialization opportunities based on strengths
+• Leadership development (if applicable)
+• Mentor training and knowledge sharing
+
+SUPERVISION RECOMMENDATIONS:
+${averageScore < 5 ? '• Weekly supervision with structured skill development focus' :
+  averageScore < 7 ? '• Fortnightly supervision with goal-focused discussions' :
+  '• Monthly supervision with professional development planning'}
+
+CAREER DEVELOPMENT PATHWAY:
+${averageScore >= 8 ? 'Ready for senior roles, team leadership, or specialist positions' :
+  averageScore >= 6 ? 'Suitable for independent practice with pathway to senior roles' :
+  averageScore >= 4 ? 'Developing practitioner with support toward independent practice' :
+  'Entry-level practitioner requiring comprehensive development program'}
+    `;
+
+    setSummary(summaryText);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white rounded-lg shadow-sm p-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-blue-800 mb-2">
+              NDIS Skills Assessment & Development Pathway
+            </h1>
+            <p className="text-gray-600">
+              Comprehensive skills evaluation and personalized development planning for NDIS support workers
+            </p>
+          </div>
+
+          <div className="space-y-8">
+            {/* Employee Information */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Employee Name:
+              </label>
+              <input
+                type="text"
+                value={employeeName}
+                onChange={(e) => setEmployeeName(e.target.value)}
+                placeholder="e.g. Sarah Johnson"
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-600"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Current Role:
+              </label>
+              <input
+                type="text"
+                value={currentRole}
+                onChange={(e) => setCurrentRole(e.target.value)}
+                placeholder="e.g. Support Worker"
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-600"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Experience Level:
+              </label>
+              <select
+                value={experience}
+                onChange={(e) => setExperience(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-600"
+              >
+                <option value="">Select experience level</option>
+                <option value="New to disability support">New to disability support</option>
+                <option value="Some experience in related fields">Some experience in related fields</option>
+                <option value="1-2 years disability support experience">1-2 years disability support experience</option>
+                <option value="3-5 years disability support experience">3-5 years disability support experience</option>
+                <option value="5+ years disability support experience">5+ years disability support experience</option>
+              </select>
+            </div>
+
+            {/* Core Values & Person-Centered Approach */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-4">
+                Core Values & Person-Centered Approach (1–10):
+              </label>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={coreValues}
+                    onChange={(e) => setCoreValues(parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(coreValues - 1) * 11.11}%, #cbd5e1 ${(coreValues - 1) * 11.11}%, #cbd5e1 100%)`
+                    }}
+                  />
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium min-w-[40px] text-center">
+                    {coreValues}
+                  </span>
+                </div>
+                <div className="flex items-start space-x-2 text-gray-600">
+                  <Users className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm">{getSkillDescription('coreValues', coreValues)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Communication & Empathy */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-4">
+                Communication & Empathy (1–10):
+              </label>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={communication}
+                    onChange={(e) => setCommunication(parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(communication - 1) * 11.11}%, #cbd5e1 ${(communication - 1) * 11.11}%, #cbd5e1 100%)`
+                    }}
+                  />
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium min-w-[40px] text-center">
+                    {communication}
+                  </span>
+                </div>
+                <div className="flex items-start space-x-2 text-gray-600">
+                  <MessageCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm">{getSkillDescription('communication', communication)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Problem-Solving & Adaptability */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-4">
+                Problem-Solving & Adaptability (1–10):
+              </label>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={problemSolving}
+                    onChange={(e) => setProblemSolving(parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(problemSolving - 1) * 11.11}%, #cbd5e1 ${(problemSolving - 1) * 11.11}%, #cbd5e1 100%)`
+                    }}
+                  />
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium min-w-[40px] text-center">
+                    {problemSolving}
+                  </span>
+                </div>
+                <div className="flex items-start space-x-2 text-gray-600">
+                  <Brain className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm">{getSkillDescription('problemSolving', problemSolving)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Compliance & Risk Management */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-4">
+                Compliance & Risk Management (1–10):
+              </label>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={compliance}
+                    onChange={(e) => setCompliance(parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(compliance - 1) * 11.11}%, #cbd5e1 ${(compliance - 1) * 11.11}%, #cbd5e1 100%)`
+                    }}
+                  />
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium min-w-[40px] text-center">
+                    {compliance}
+                  </span>
+                </div>
+                <div className="flex items-start space-x-2 text-gray-600">
+                  <Shield className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm">{getSkillDescription('compliance', compliance)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Capacity Building & Goal Planning */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-4">
+                Capacity Building & Goal Planning (1–10):
+              </label>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={capacityBuilding}
+                    onChange={(e) => setCapacityBuilding(parseInt(e.target.value))}
+                    className="flex-1 h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
+                    style={{
+                      background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(capacityBuilding - 1) * 11.11}%, #cbd5e1 ${(capacityBuilding - 1) * 11.11}%, #cbd5e1 100%)`
+                    }}
+                  />
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium min-w-[40px] text-center">
+                    {capacityBuilding}
+                  </span>
+                </div>
+                <div className="flex items-start space-x-2 text-gray-600">
+                  <TrendingUp className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm">{getSkillDescription('capacityBuilding', capacityBuilding)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Generate Summary Button */}
+            <div>
+              <button
+                onClick={generateSummary}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md transition-colors duration-200"
+              >
+                Generate Summary
+              </button>
+            </div>
+
+            {/* Summary Output */}
+            {summary && (
+              <div>
+                <textarea
+                  value={summary}
+                  readOnly
+                  className="w-full h-96 px-4 py-3 border border-gray-300 rounded-md bg-gray-50 font-mono text-sm text-gray-700 resize-none"
+                  style={{ lineHeight: '1.5' }}
+                />
+                <div className="mt-4 flex space-x-4">
+                  <button
+                    onClick={() => navigator.clipboard.writeText(summary)}
+                    className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 flex items-center space-x-2"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>Copy to Clipboard</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default NDISSkillsAssessment;
